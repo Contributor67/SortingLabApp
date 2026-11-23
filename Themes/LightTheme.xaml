@@ -1,0 +1,46 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Базовые цвета Светлой темы -->
+    <Color x:Key="WindowBgColor">#F1F5F9</Color>
+    <Color x:Key="CardBgColor">#FFFFFF</Color>
+    <Color x:Key="CardHoverBgColor">#F8FAFC</Color>
+    <Color x:Key="BorderColor">#CBD5E1</Color>
+    <Color x:Key="TextPrimaryColor">#0F172A</Color>
+    <Color x:Key="TextSecondaryColor">#475569</Color>
+    <Color x:Key="TextMutedColor">#94A3B8</Color>
+    
+    <!-- Акценты и индикаторы -->
+    <Color x:Key="AccentColor">#2563EB</Color>
+    <Color x:Key="AccentHoverColor">#3B82F6</Color>
+    <Color x:Key="AccentPressedColor">#1D4ED8</Color>
+    
+    <!-- Цвета для визуализации сортировок -->
+    <Color x:Key="BarDefaultColor">#0284C7</Color>      <!-- Насыщенный синий: обычный элемент -->
+    <Color x:Key="BarComparingColor">#D97706</Color>    <!-- Янтарный: сравнение -->
+    <Color x:Key="BarSwappingColor">#DC2626</Color>     <!-- Красный: перестановка/запись -->
+    <Color x:Key="BarPivotColor">#9333EA</Color>        <!-- Фиолетовый: опорный / шаг -->
+    <Color x:Key="BarSortedColor">#059669</Color>       <!-- Зеленый: на месте -->
+
+    <!-- Кисти (SolidColorBrush) -->
+    <SolidColorBrush x:Key="WindowBgBrush" Color="{StaticResource WindowBgColor}" />
+    <SolidColorBrush x:Key="CardBgBrush" Color="{StaticResource CardBgColor}" />
+    <SolidColorBrush x:Key="CardHoverBgBrush" Color="{StaticResource CardHoverBgColor}" />
+    <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}" />
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimaryColor}" />
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondaryColor}" />
+    <SolidColorBrush x:Key="TextMutedBrush" Color="{StaticResource TextMutedColor}" />
+    
+    <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}" />
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="{StaticResource AccentHoverColor}" />
+    <SolidColorBrush x:Key="AccentPressedBrush" Color="{StaticResource AccentPressedColor}" />
+    
+    <SolidColorBrush x:Key="BarDefaultBrush" Color="{StaticResource BarDefaultColor}" />
+    <SolidColorBrush x:Key="BarComparingBrush" Color="{StaticResource BarComparingColor}" />
+    <SolidColorBrush x:Key="BarSwappingBrush" Color="{StaticResource BarSwappingColor}" />
+    <SolidColorBrush x:Key="BarPivotBrush" Color="{StaticResource BarPivotColor}" />
+    <SolidColorBrush x:Key="BarSortedBrush" Color="{StaticResource BarSortedColor}" />
+    
+    <SolidColorBrush x:Key="LogBgBrush" Color="#F8FAFC" />
+    <SolidColorBrush x:Key="BadgeBgBrush" Color="#E2E8F0" />
+</ResourceDictionary>

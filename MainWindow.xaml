@@ -1,0 +1,828 @@
+<Window x:Class="SortingLabApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Практическое задание 4: Алгоритмы внутренней и внешней сортировки" 
+        Height="870" Width="1260"
+        MinHeight="720" MinWidth="1020"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource WindowBgBrush}"
+        Focusable="True">
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <!-- Верхняя шапка -->
+            <RowDefinition Height="Auto"/>
+            <!-- Основные вкладки -->
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Шапка приложения -->
+        <Border Grid.Row="0" Background="{DynamicResource CardBgBrush}" 
+                BorderBrush="{DynamicResource BorderBrush}" 
+                BorderThickness="0,0,0,1" Padding="20,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Практическое задание 4: Алгоритмы сортировки" 
+                               FontSize="18" FontWeight="Bold" 
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    <TextBlock Text="CombSort • ShellSort • QuickSort • TimSort • Внешнее слияние с цветными сериями • MSD RadixSort" 
+                               FontSize="12" Margin="0,3,0,0"
+                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                </StackPanel>
+
+                <!-- Кнопка вызова настроек -->
+                <Button Grid.Column="1" Click="SettingsButton_Click" 
+                        ToolTip="Настройки темы и горячих клавиш"
+                        Padding="14,8" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="⚙" FontSize="14" Margin="0,0,6,0"/>
+                        <TextBlock Text="Настройки"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- Вкладки по заданиям -->
+        <TabControl Grid.Row="1" Background="Transparent" BorderThickness="0" Margin="12,8,12,12">
+            <TabControl.Resources>
+                <Style TargetType="TabItem">
+                    <Setter Property="FontSize" Value="14"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                    <Setter Property="Padding" Value="18,10"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="TabItem">
+                                <Border x:Name="border" Background="Transparent" 
+                                        BorderBrush="Transparent" BorderThickness="0,0,0,3" 
+                                        Padding="{TemplateBinding Padding}" Margin="0,0,10,0" Cursor="Hand">
+                                    <ContentPresenter ContentSource="Header" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="border" Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+                                        <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TabControl.Resources>
+
+            <!-- ========================================================================= -->
+            <!-- ВКЛАДКА 1: ВНУТРЕННЯЯ СОРТИРОВКА (Задание 1) -->
+            <!-- ========================================================================= -->
+            <TabItem Header="Задание 1: Внутренняя сортировка">
+                <Grid Margin="0,10,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/> <!-- Панель параметров и управления -->
+                        <RowDefinition Height="*"/>    <!-- Область анимации гистограммы -->
+                        <RowDefinition Height="180"/>  <!-- Пояснения для 6-классника и лог -->
+                    </Grid.RowDefinitions>
+
+                    <!-- Верхняя панель управления -->
+                    <Border Grid.Row="0" Background="{DynamicResource CardBgBrush}" 
+                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" 
+                            CornerRadius="8" Padding="14,10" Margin="0,0,0,10">
+                        <WrapPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <!-- Выбор алгоритма -->
+                            <StackPanel Margin="0,0,16,0" VerticalAlignment="Center">
+                                <TextBlock Text="Алгоритм:" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,3"/>
+                                <ComboBox x:Name="CbInternalAlgorithm" Width="180" SelectionChanged="InternalAlgorithm_SelectionChanged">
+                                    <ComboBoxItem Content="Comb Sort (Расчёской)" IsSelected="True"/>
+                                    <ComboBoxItem Content="Shell Sort (Шелла)"/>
+                                    <ComboBoxItem Content="Quick Sort (Хоара)"/>
+                                    <ComboBoxItem Content="Tim Sort (Тимсорт)"/>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <!-- Тип массива -->
+                            <StackPanel Margin="0,0,16,0" VerticalAlignment="Center">
+                                <TextBlock Text="Тип данных:" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,3"/>
+                                <ComboBox x:Name="CbArrayType" Width="160">
+                                    <ComboBoxItem Content="Случайный массив" IsSelected="True"/>
+                                    <ComboBoxItem Content="Почти упорядоченный"/>
+                                    <ComboBoxItem Content="Обратный порядок"/>
+                                    <ComboBoxItem Content="С повторениями"/>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <!-- Размер массива -->
+                            <StackPanel Margin="0,0,16,0" VerticalAlignment="Center" Width="140">
+                                <DockPanel Margin="0,0,0,3">
+                                    <TextBlock Text="Элементов:" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    <TextBlock x:Name="TbArraySizeVal" Text="25" FontSize="11" FontWeight="Bold" 
+                                               Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Right"/>
+                                </DockPanel>
+                                <Slider x:Name="SliderArraySize" Minimum="10" Maximum="80" Value="25" 
+                                        IsSnapToTickEnabled="True" TickFrequency="5"
+                                        ValueChanged="SliderArraySize_ValueChanged"/>
+                            </StackPanel>
+
+                            <!-- Кнопка генерации -->
+                            <Button x:Name="BtnGenerateArray" Content="🎲 Новый массив" 
+                                    Click="BtnGenerateArray_Click" Margin="0,15,16,0" Height="32"/>
+
+                            <!-- Разделитель -->
+                            <Rectangle Width="1" Height="36" Fill="{DynamicResource BorderBrush}" Margin="0,8,16,0"/>
+
+                            <!-- Кнопки управления воспроизведением -->
+                            <StackPanel Orientation="Horizontal" Margin="0,15,16,0">
+                                <Button x:Name="BtnInternalPrev" Content="⏮ Шаг назад [←]" 
+                                        Click="BtnInternalPrev_Click" ToolTip="Откат на шаг назад (Стрелка влево)" Height="32" Margin="0,0,6,0"/>
+                                <Button x:Name="BtnInternalPlayPause" Content="▶ Старт [Пробел]" 
+                                        Style="{StaticResource AccentButton}"
+                                        Click="BtnInternalPlayPause_Click" ToolTip="Запуск или пауза (Пробел)" Width="120" Height="32" Margin="0,0,6,0"/>
+                                <Button x:Name="BtnInternalNext" Content="⏭ Шаг вперед [→]" 
+                                        Click="BtnInternalNext_Click" ToolTip="Шаг вперед (Стрелка вправо)" Height="32" Margin="0,0,6,0"/>
+                                <Button x:Name="BtnInternalReset" Content="↺ Сброс [R]" 
+                                        Click="BtnInternalReset_Click" ToolTip="Сбросить к исходному состоянию (R)" Height="32"/>
+                            </StackPanel>
+
+                            <!-- Скорость (задержка) -->
+                            <StackPanel VerticalAlignment="Center" Width="130">
+                                <DockPanel Margin="0,0,0,3">
+                                    <TextBlock Text="Задержка:" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    <TextBlock x:Name="TbInternalDelayVal" Text="150 мс" FontSize="11" FontWeight="Bold" 
+                                               Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Right"/>
+                                </DockPanel>
+                                <Slider x:Name="SliderInternalDelay" Minimum="15" Maximum="1500" Value="150" 
+                                        ValueChanged="SliderInternalDelay_ValueChanged"/>
+                            </StackPanel>
+                        </WrapPanel>
+                    </Border>
+
+                    <!-- Центральная область: Индикаторы и Анимированная Гистограмма -->
+                    <Border Grid.Row="1" Background="{DynamicResource CardBgBrush}" 
+                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" 
+                            CornerRadius="8" Padding="16" Margin="0,0,0,10">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/> <!-- Индикаторы -->
+                                <RowDefinition Height="*"/>    <!-- Canvas для плавно перемещающихся элементов -->
+                            </Grid.RowDefinitions>
+
+                            <!-- Информационные бейджи -->
+                            <WrapPanel Grid.Row="0" Margin="0,0,0,12">
+                                <Border Background="{DynamicResource BadgeBgBrush}" CornerRadius="6" Padding="10,4" Margin="0,0,10,0">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Шаг: " Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12"/>
+                                        <TextBlock x:Name="TbInternalStepNum" Text="0 / 0" FontWeight="Bold" 
+                                                   Foreground="{DynamicResource TextPrimaryBrush}" FontSize="12"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Background="{DynamicResource BadgeBgBrush}" CornerRadius="6" Padding="10,4" Margin="0,0,10,0">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Сравнений (C): " Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12"/>
+                                        <TextBlock x:Name="TbInternalComps" Text="0" FontWeight="Bold" 
+                                                   Foreground="{DynamicResource BarComparingBrush}" FontSize="12"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Background="{DynamicResource BadgeBgBrush}" CornerRadius="6" Padding="10,4" Margin="0,0,10,0">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Перестановок/Записей (M): " Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12"/>
+                                        <TextBlock x:Name="TbInternalSwaps" Text="0" FontWeight="Bold" 
+                                                   Foreground="{DynamicResource BarSwappingBrush}" FontSize="12"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Легенда цветов -->
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,0,0">
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,12,0">
+                                        <Rectangle Width="12" Height="12" RadiusX="2" RadiusY="2" Fill="{DynamicResource BarDefaultBrush}" Margin="0,0,4,0"/>
+                                        <TextBlock Text="Обычный" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,12,0">
+                                        <Rectangle Width="12" Height="12" RadiusX="2" RadiusY="2" Fill="{DynamicResource BarComparingBrush}" Margin="0,0,4,0"/>
+                                        <TextBlock Text="Сравнение" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,12,0">
+                                        <Rectangle Width="12" Height="12" RadiusX="2" RadiusY="2" Fill="{DynamicResource BarSwappingBrush}" Margin="0,0,4,0"/>
+                                        <TextBlock Text="Перемещение" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,12,0">
+                                        <Rectangle Width="12" Height="12" RadiusX="2" RadiusY="2" Fill="{DynamicResource BarPivotBrush}" Margin="0,0,4,0"/>
+                                        <TextBlock Text="Опорный/Блок" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Rectangle Width="12" Height="12" RadiusX="2" RadiusY="2" Fill="{DynamicResource BarSortedBrush}" Margin="0,0,4,0"/>
+                                        <TextBlock Text="На месте" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </WrapPanel>
+
+                            <!-- Контейнер для плавной анимации перемещения элементов -->
+                            <Canvas x:Name="CanvasHistogram" Grid.Row="1" ClipToBounds="True" SizeChanged="CanvasHistogram_SizeChanged"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Нижняя часть: Пояснение для 6-классника и Лог -->
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="1.1*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Пояснение для 6-классника -->
+                        <Border Grid.Column="0" Background="{DynamicResource CardBgBrush}" 
+                                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" 
+                                CornerRadius="8" Padding="14" Margin="0,0,10,0">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+                                    <TextBlock Text="💡" FontSize="16" Margin="0,0,6,0"/>
+                                    <TextBlock Text="Пояснение для 6-классника (что происходит на этом шаге):" 
+                                               FontWeight="Bold" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                </StackPanel>
+
+                                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                                    <TextBlock x:Name="TbInternalExplanation" TextWrapping="Wrap" 
+                                               FontSize="14" LineHeight="20"
+                                               Foreground="{DynamicResource TextPrimaryBrush}" 
+                                               Text="Выберите алгоритм и нажмите «Старт» или стрелочку [→] для начала сортировки."/>
+                                </ScrollViewer>
+                            </Grid>
+                        </Border>
+
+                        <!-- Журнал операций (Лог) -->
+                        <Border Grid.Column="1" Background="{DynamicResource LogBgBrush}" 
+                                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" 
+                                CornerRadius="8" Padding="12">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Text="Журнал операций (Технический лог):" 
+                                           FontWeight="SemiBold" FontSize="12" 
+                                           Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6"/>
+
+                                <ListBox x:Name="LbInternalLog" Grid.Row="1" 
+                                         Background="Transparent" BorderThickness="0"
+                                         Foreground="{DynamicResource TextSecondaryBrush}" 
+                                         FontFamily="Consolas, monospace" FontSize="11"/>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </Grid>
+            </TabItem>
+
+            <!-- ========================================================================= -->
+            <!-- ВКЛАДКА 2: ВНЕШНЯЯ СОРТИРОВКА (Задание 2) -->
+            <!-- ========================================================================= -->
+            <TabItem Header="Задание 2: Внешняя сортировка (Слияние)">
+                <Grid Margin="0,10,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/> <!-- Панель параметров -->
+                        <RowDefinition Height="*"/>    <!-- Арена и файлы -->
+                        <RowDefinition Height="180"/>  <!-- Пояснения и лог -->
+                    </Grid.RowDefinitions>
+
+                    <!-- Верхняя панель параметров внешней сортировки -->
+                    <Border Grid.Row="0" Background="{DynamicResource CardBgBrush}" 
+                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" 
+                            CornerRadius="8" Padding="14,10" Margin="0,0,0,10">
+                        <WrapPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <!-- Метод слияния -->
+                            <StackPanel Margin="0,0,14,0" VerticalAlignment="Center">
+                                <TextBlock Text="Метод внешней сортировки:" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,3"/>
+                                <ComboBox x:Name="CbExternalMethod" Width="200" SelectionChanged="ExternalParameters_Changed">
+                                    <ComboBoxItem Content="Прямое слияние (Direct Merge)" IsSelected="True"/>
+                                    <ComboBoxItem Content="Естественное слияние (Natural Merge)"/>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <!-- Ключевой атрибут -->
+                            <StackPanel Margin="0,0,14,0" VerticalAlignment="Center">
+                                <TextBlock Text="Ключ сортировки:" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,3"/>
+                                <ComboBox x:Name="CbExternalSortKey" Width="140" SelectionChanged="ExternalParameters_Changed">
+                                    <ComboBoxItem Content="Население" IsSelected="True"/>
+                                    <ComboBoxItem Content="Площадь"/>
+                                    <ComboBoxItem Content="Название"/>
+                                    <ComboBoxItem Content="Столица"/>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <!-- Фильтр по континенту -->
+                            <StackPanel Margin="0,0,14,0" VerticalAlignment="Center">
+                                <TextBlock Text="Континент (фильтрация):" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,3"/>
+                                <ComboBox x:Name="CbExternalContinent" Width="150" SelectionChanged="ExternalParameters_Changed">
+                                    <ComboBoxItem Content="Все континенты" IsSelected="True"/>
+                                    <ComboBoxItem Content="Европа"/>
+                                    <ComboBoxItem Content="Азия"/>
+                                    <ComboBoxItem Content="Африка"/>
+                                    <ComboBoxItem Content="Северная Америка"/>
+                                    <ComboBoxItem Content="Южная Америка"/>
+                                    <ComboBoxItem Content="Океания"/>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <!-- Порядок сортировки -->
+                            <StackPanel Margin="0,0,14,0" VerticalAlignment="Center">
+                                <TextBlock Text="Порядок:" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,3"/>
+                                <ComboBox x:Name="CbExternalSortDir" Width="130" SelectionChanged="ExternalParameters_Changed">
+                                    <ComboBoxItem Content="По возрастанию" IsSelected="True"/>
+                                    <ComboBoxItem Content="По убыванию"/>
+                                </ComboBox>
+                            </StackPanel>
+
+                            <!-- Управление воспроизведением -->
+                            <StackPanel Orientation="Horizontal" Margin="0,15,14,0">
+                                <Button x:Name="BtnExternalPrev" Content="⏮ Назад [←]" Click="BtnExternalPrev_Click" Height="32" Margin="0,0,6,0"/>
+                                <Button x:Name="BtnExternalPlayPause" Content="▶ Старт [Пробел]" 
+                                        Style="{StaticResource AccentButton}"
+                                        Click="BtnExternalPlayPause_Click" Width="120" Height="32" Margin="0,0,6,0"/>
+                                <Button x:Name="BtnExternalNext" Content="⏭ Вперед [→]" Click="BtnExternalNext_Click" Height="32" Margin="0,0,6,0"/>
+                                <Button x:Name="BtnExternalReset" Content="↺ Сброс [R]" Click="BtnExternalReset_Click" Height="32"/>
+                            </StackPanel>
+
+                            <!-- Задержка -->
+                            <StackPanel VerticalAlignment="Center" Width="130">
+                                <DockPanel Margin="0,0,0,3">
+                                    <TextBlock Text="Задержка:" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    <TextBlock x:Name="TbExternalDelayVal" Text="350 мс" FontSize="11" FontWeight="Bold" 
+                                               Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Right"/>
+                                </DockPanel>
+                                <Slider x:Name="SliderExternalDelay" Minimum="30" Maximum="2000" Value="350" 
+                                        ValueChanged="SliderExternalDelay_ValueChanged"/>
+                            </StackPanel>
+                        </WrapPanel>
+                    </Border>
+
+                    <!-- Центральная визуализация: Арена поединка и Файлы F0, F1, F2 -->
+                    <Grid Grid.Row="1" Margin="0,0,0,10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/> <!-- Индикаторы -->
+                            <RowDefinition Height="Auto"/> <!-- Арена поединка стран -->
+                            <RowDefinition Height="*"/>    <!-- 3 колонки файлов F0, F1, F2 -->
+                        </Grid.RowDefinitions>
+
+                        <!-- Индикаторы внешней сортировки -->
+                        <Border Grid.Row="0" Background="{DynamicResource CardBgBrush}" 
+                                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" 
+                                CornerRadius="8" Padding="12,8" Margin="0,0,0,8">
+                            <DockPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,16,0">
+                                        <TextBlock Text="Шаг: " Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                        <TextBlock x:Name="TbExternalStepNum" Text="0 / 0" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,16,0">
+                                        <TextBlock Text="Фаза: " Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                        <TextBlock x:Name="TbExternalPhase" Text="Готово к запуску" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,16,0">
+                                        <TextBlock Text="Проход: " Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                        <TextBlock x:Name="TbExternalPass" Text="0" FontWeight="Bold" Foreground="{DynamicResource BarPivotBrush}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,16,0">
+                                        <TextBlock Text="Сравнений (C): " Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                        <TextBlock x:Name="TbExternalComps" Text="0" FontWeight="Bold" Foreground="{DynamicResource BarComparingBrush}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Дисковых операций (M): " Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                        <TextBlock x:Name="TbExternalFileOps" Text="0" FontWeight="Bold" Foreground="{DynamicResource BarSwappingBrush}"/>
+                                    </StackPanel>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Button Content="📂 База стран" Click="BtnLoadDefaultCountries_Click" Padding="10,4" Margin="0,0,8,0"/>
+                                    <Button Content="🎲 Случайные страны" Click="BtnGenerateRandomCountries_Click" Padding="10,4"/>
+                                </StackPanel>
+                            </DockPanel>
+                        </Border>
+
+                        <!-- Арена поединка стран (Duel Arena) -->
+                        <Border Grid.Row="1" Background="{DynamicResource BadgeBgBrush}" 
+                                BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1" 
+                                CornerRadius="8" Padding="14,10" Margin="0,0,0,8">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Карточка претендента из F1 -->
+                                <Border x:Name="CardArenaF1" Grid.Column="0" Background="{DynamicResource CardBgBrush}" 
+                                        BorderBrush="{DynamicResource BarComparingBrush}" BorderThickness="2" 
+                                        CornerRadius="8" Padding="12,8" Margin="0,0,10,0">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <DockPanel Grid.Row="0">
+                                            <Border Background="{DynamicResource BarComparingBrush}" CornerRadius="4" Padding="6,2" Margin="0,0,8,0">
+                                                <TextBlock Text="Файл F1" FontWeight="Bold" FontSize="11" Foreground="#0F172A"/>
+                                            </Border>
+                                            <TextBlock x:Name="TbArenaCountry1" Text="Ожидание..." FontWeight="Bold" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                            <TextBlock x:Name="TbArenaContinent1" Text="" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Right" FontSize="12"/>
+                                        </DockPanel>
+                                        <DockPanel Grid.Row="1" Margin="0,6,0,0">
+                                            <TextBlock x:Name="TbArenaCapital1" Text="" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
+                                            <TextBlock x:Name="TbArenaVal1" Text="" FontWeight="Bold" FontSize="14" 
+                                                       Foreground="{DynamicResource BarComparingBrush}" HorizontalAlignment="Right"/>
+                                        </DockPanel>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Центральный блок: Символ дуэли и статус победителя -->
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="6,0">
+                                    <Border x:Name="BadgeVersus" Background="{DynamicResource AccentBrush}" CornerRadius="14" Padding="12,4" HorizontalAlignment="Center">
+                                        <TextBlock x:Name="TbArenaSymbol" Text="VS" FontWeight="Bold" FontSize="14" Foreground="White"/>
+                                    </Border>
+                                    <TextBlock x:Name="TbArenaWinnerNotice" Text="Ожидание выбора" FontWeight="SemiBold" FontSize="11" 
+                                               Foreground="{DynamicResource AccentBrush}" HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                                </StackPanel>
+
+                                <!-- Карточка претендента из F2 -->
+                                <Border x:Name="CardArenaF2" Grid.Column="2" Background="{DynamicResource CardBgBrush}" 
+                                        BorderBrush="{DynamicResource BarSwappingBrush}" BorderThickness="2" 
+                                        CornerRadius="8" Padding="12,8" Margin="10,0,0,0">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <DockPanel Grid.Row="0">
+                                            <Border Background="{DynamicResource BarSwappingBrush}" CornerRadius="4" Padding="6,2" Margin="0,0,8,0">
+                                                <TextBlock Text="Файл F2" FontWeight="Bold" FontSize="11" Foreground="White"/>
+                                            </Border>
+                                            <TextBlock x:Name="TbArenaCountry2" Text="Ожидание..." FontWeight="Bold" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                            <TextBlock x:Name="TbArenaContinent2" Text="" Foreground="{DynamicResource TextSecondaryBrush}" HorizontalAlignment="Right" FontSize="12"/>
+                                        </DockPanel>
+                                        <DockPanel Grid.Row="1" Margin="0,6,0,0">
+                                            <TextBlock x:Name="TbArenaCapital2" Text="" Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
+                                            <TextBlock x:Name="TbArenaVal2" Text="" FontWeight="Bold" FontSize="14" 
+                                                       Foreground="{DynamicResource BarSwappingBrush}" HorizontalAlignment="Right"/>
+                                        </DockPanel>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                        </Border>
+
+                        <!-- Контейнер списков файлов с летающей карточкой поверх них -->
+                        <Grid Grid.Row="2">
+                            <!-- 3 колонки файлов F0, F1, F2 -->
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Файл F0 -->
+                            <Border x:Name="ColFile0" Grid.Column="0" Background="{DynamicResource CardBgBrush}" 
+                                    BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" 
+                                    CornerRadius="8" Padding="10" Margin="0,0,6,0">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <DockPanel Grid.Row="0" Margin="0,0,0,8">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="📁 Основной файл (F0.csv)" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource AccentBrush}"/>
+                                        </StackPanel>
+                                        <TextBlock x:Name="TbF0Count" Text="0 записей" HorizontalAlignment="Right" 
+                                                   Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
+                                    </DockPanel>
+                                    <ListBox x:Name="LbFile0" Grid.Row="1" Background="{DynamicResource LogBgBrush}" 
+                                             BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Margin="0,1">
+                                                    <!-- Разделитель серии при начале новой серии -->
+                                                    <Border Background="{Binding RunColorHex}" CornerRadius="3" Padding="6,1" Margin="0,4,0,2"
+                                                            HorizontalAlignment="Left"
+                                                            Visibility="{Binding HeaderVisibility}">
+                                                        <TextBlock Text="{Binding RunLabel}" FontSize="10" FontWeight="Bold" Foreground="White"/>
+                                                    </Border>
+                                                    <!-- Сама карточка записи -->
+                                                    <Border Background="{DynamicResource CardBgBrush}" BorderBrush="{Binding RunColorHex}" 
+                                                            BorderThickness="3,0,0,0" CornerRadius="4" Padding="8,4" Margin="0,1">
+                                                        <DockPanel>
+                                                            <TextBlock Text="{Binding Country.Name}" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                                            <TextBlock Text="{Binding Country.Continent}" Foreground="{DynamicResource TextSecondaryBrush}" Margin="8,0,0,0" FontSize="11"/>
+                                                            <TextBlock Text="{Binding Country.Population, StringFormat='Нас: {0:N0}'}" HorizontalAlignment="Right" 
+                                                                       Foreground="{DynamicResource AccentBrush}" FontWeight="SemiBold" FontSize="11"/>
+                                                        </DockPanel>
+                                                    </Border>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+                                </Grid>
+                            </Border>
+
+                            <!-- Файл F1 -->
+                            <Border x:Name="ColFile1" Grid.Column="1" Background="{DynamicResource CardBgBrush}" 
+                                    BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" 
+                                    CornerRadius="8" Padding="10" Margin="3,0,3,0">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <DockPanel Grid.Row="0" Margin="0,0,0,8">
+                                        <TextBlock Text="📄 Вспомогательный файл 1 (F1.csv)" FontWeight="Bold" FontSize="13" 
+                                                   Foreground="{DynamicResource BarComparingBrush}"/>
+                                        <TextBlock x:Name="TbF1Count" Text="0 записей" HorizontalAlignment="Right" 
+                                                   Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
+                                    </DockPanel>
+                                    <ListBox x:Name="LbFile1" Grid.Row="1" Background="{DynamicResource LogBgBrush}" 
+                                             BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Margin="0,1">
+                                                    <Border Background="{Binding RunColorHex}" CornerRadius="3" Padding="6,1" Margin="0,4,0,2"
+                                                            HorizontalAlignment="Left"
+                                                            Visibility="{Binding HeaderVisibility}">
+                                                        <TextBlock Text="{Binding RunLabel}" FontSize="10" FontWeight="Bold" Foreground="White"/>
+                                                    </Border>
+                                                    <Border Background="{DynamicResource CardBgBrush}" BorderBrush="{Binding RunColorHex}" 
+                                                            BorderThickness="3,0,0,0" CornerRadius="4" Padding="8,4" Margin="0,1">
+                                                        <DockPanel>
+                                                            <TextBlock Text="{Binding Country.Name}" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                                            <TextBlock Text="{Binding Country.Continent}" Foreground="{DynamicResource TextSecondaryBrush}" Margin="8,0,0,0" FontSize="11"/>
+                                                            <TextBlock Text="{Binding Country.Population, StringFormat='Нас: {0:N0}'}" HorizontalAlignment="Right" 
+                                                                       Foreground="{DynamicResource BarComparingBrush}" FontWeight="SemiBold" FontSize="11"/>
+                                                        </DockPanel>
+                                                    </Border>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+                                </Grid>
+                            </Border>
+
+                            <!-- Файл F2 -->
+                            <Border x:Name="ColFile2" Grid.Column="2" Background="{DynamicResource CardBgBrush}" 
+                                    BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" 
+                                    CornerRadius="8" Padding="10" Margin="6,0,0,0">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
+                                    <DockPanel Grid.Row="0" Margin="0,0,0,8">
+                                        <TextBlock Text="📄 Вспомогательный файл 2 (F2.csv)" FontWeight="Bold" FontSize="13" 
+                                                   Foreground="{DynamicResource BarSwappingBrush}"/>
+                                        <TextBlock x:Name="TbF2Count" Text="0 записей" HorizontalAlignment="Right" 
+                                                   Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
+                                    </DockPanel>
+                                    <ListBox x:Name="LbFile2" Grid.Row="1" Background="{DynamicResource LogBgBrush}" 
+                                             BorderThickness="0" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Margin="0,1">
+                                                    <Border Background="{Binding RunColorHex}" CornerRadius="3" Padding="6,1" Margin="0,4,0,2"
+                                                            HorizontalAlignment="Left"
+                                                            Visibility="{Binding HeaderVisibility}">
+                                                        <TextBlock Text="{Binding RunLabel}" FontSize="10" FontWeight="Bold" Foreground="White"/>
+                                                    </Border>
+                                                    <Border Background="{DynamicResource CardBgBrush}" BorderBrush="{Binding RunColorHex}" 
+                                                            BorderThickness="3,0,0,0" CornerRadius="4" Padding="8,4" Margin="0,1">
+                                                        <DockPanel>
+                                                            <TextBlock Text="{Binding Country.Name}" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                                            <TextBlock Text="{Binding Country.Continent}" Foreground="{DynamicResource TextSecondaryBrush}" Margin="8,0,0,0" FontSize="11"/>
+                                                            <TextBlock Text="{Binding Country.Population, StringFormat='Нас: {0:N0}'}" HorizontalAlignment="Right" 
+                                                                       Foreground="{DynamicResource BarSwappingBrush}" FontWeight="SemiBold" FontSize="11"/>
+                                                        </DockPanel>
+                                                    </Border>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+                                </Grid>
+                            </Border>
+
+                            <!-- Слой с летающей карточкой (Canvas Flight Overlay) -->
+                            <Canvas x:Name="CanvasExternalFlight" Grid.ColumnSpan="3" IsHitTestVisible="False" ClipToBounds="True">
+                                <Border x:Name="FlyingCard" Background="{DynamicResource CardBgBrush}" 
+                                        BorderBrush="{DynamicResource AccentBrush}" BorderThickness="2" 
+                                        CornerRadius="6" Padding="10,6" Width="200" Visibility="Collapsed"
+                                        Canvas.Left="0" Canvas.Top="0">
+                                    <DockPanel>
+                                        <TextBlock x:Name="TbFlyingCountryName" Text="Страна" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                        <TextBlock x:Name="TbFlyingCountryVal" Text="" HorizontalAlignment="Right" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}"/>
+                                    </DockPanel>
+                                </Border>
+                            </Canvas>
+                        </Grid>
+                    </Grid>
+
+                    <!-- Нижняя панель: Пояснение для 6-классника и Лог слияния -->
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="1.1*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Пояснение для 6-классника -->
+                        <Border Grid.Column="0" Background="{DynamicResource CardBgBrush}" 
+                                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" 
+                                CornerRadius="8" Padding="14" Margin="0,0,10,0">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+                                    <TextBlock Text="💡" FontSize="16" Margin="0,0,6,0"/>
+                                    <TextBlock Text="Пояснение для 6-классника (внешняя сортировка):" 
+                                               FontWeight="Bold" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                </StackPanel>
+                                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                                    <TextBlock x:Name="TbExternalExplanation" TextWrapping="Wrap" 
+                                               FontSize="14" LineHeight="20"
+                                               Foreground="{DynamicResource TextPrimaryBrush}" 
+                                               Text="Выберите метод и нажмите «Старт». Алгоритм продемонстрирует, как сортируются файлы на диске!"/>
+                                </ScrollViewer>
+                            </Grid>
+                        </Border>
+
+                        <!-- Лог дисковых операций -->
+                        <Border Grid.Column="1" Background="{DynamicResource LogBgBrush}" 
+                                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" 
+                                CornerRadius="8" Padding="12">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="Журнал слияния файлов:" 
+                                           FontWeight="SemiBold" FontSize="12" 
+                                           Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,6"/>
+                                <ListBox x:Name="LbExternalLog" Grid.Row="1" 
+                                         Background="Transparent" BorderThickness="0"
+                                         Foreground="{DynamicResource TextSecondaryBrush}" 
+                                         FontFamily="Consolas, monospace" FontSize="11"/>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </Grid>
+            </TabItem>
+
+            <!-- ========================================================================= -->
+            <!-- ВКЛАДКА 3: СОРТИРОВКА СЛОВ И БЕНЧМАРК (Задание 3) -->
+            <!-- ========================================================================= -->
+            <TabItem Header="Задание 3: Слова и бенчмарк (QuickSort vs RadixSort)">
+                <Grid Margin="0,10,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="180"/> <!-- Исходный текст и кнопки генерации -->
+                        <RowDefinition Height="*"/>   <!-- Результаты: Частотная таблица и Таблица бенчмарка -->
+                    </Grid.RowDefinitions>
+
+                    <!-- Верхний блок: Текст и управление -->
+                    <Border Grid.Row="0" Background="{DynamicResource CardBgBrush}" 
+                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" 
+                            CornerRadius="8" Padding="14" Margin="0,0,0,10">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <DockPanel Grid.Row="0" Margin="0,0,0,8">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Исходный текст на английском языке" FontWeight="Bold" FontSize="13" 
+                                               Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,8,0"/>
+                                    <TextBlock x:Name="TbWordCountHeader" Text="(слов: 0)" 
+                                               Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12"/>
+                                </StackPanel>
+
+                                <!-- Кнопки быстрых шаблонов -->
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <TextBlock Text="Быстрый текст:" VerticalAlignment="Center" FontSize="11" 
+                                               Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,8,0"/>
+                                    <Button Content="100 слов" Click="BtnGenText100_Click" Padding="8,3" Margin="0,0,6,0"/>
+                                    <Button Content="500 слов" Click="BtnGenText500_Click" Padding="8,3" Margin="0,0,6,0"/>
+                                    <Button Content="1 000 слов" Click="BtnGenText1000_Click" Padding="8,3" Margin="0,0,6,0"/>
+                                    <Button Content="📖 Алиса в Стране Чудес" Click="BtnLoadAlice_Click" Padding="8,3" Margin="0,0,6,0"/>
+                                    <Button Content="💻 Алгоритмы CS" Click="BtnLoadAlgoText_Click" Padding="8,3"/>
+                                </StackPanel>
+                            </DockPanel>
+
+                            <!-- Поле ввода текста -->
+                            <TextBox x:Name="TxtSourceText" Grid.Row="1" 
+                                     TextWrapping="Wrap" AcceptsReturn="True" 
+                                     VerticalScrollBarVisibility="Auto" 
+                                     TextChanged="TxtSourceText_TextChanged"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Нижний блок: 2 колонки (Частотный анализ и Бенчмарк) -->
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="1.2*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Колонка 1: Подсчет частоты слов -->
+                        <Border Grid.Column="0" Background="{DynamicResource CardBgBrush}" 
+                                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" 
+                                CornerRadius="8" Padding="14" Margin="0,0,8,0">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <DockPanel Grid.Row="0" Margin="0,0,0,10">
+                                    <TextBlock Text="Частотный анализ слов (после сортировки)" 
+                                               FontWeight="Bold" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                    <Button Content="🔍 Рассчитать частоты" Style="{StaticResource AccentButton}" 
+                                            Click="BtnCalculateFrequencies_Click" HorizontalAlignment="Right" Padding="12,4"/>
+                                </DockPanel>
+
+                                <DataGrid x:Name="DgWordFrequencies" Grid.Row="1" AutoGenerateColumns="False" 
+                                          IsReadOnly="True" CanUserSortColumns="True">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Ранг" Binding="{Binding Rank}" Width="55"/>
+                                        <DataGridTextColumn Header="Слово" Binding="{Binding Word}" Width="*"/>
+                                        <DataGridTextColumn Header="Количество" Binding="{Binding Count}" Width="90"/>
+                                        <DataGridTextColumn Header="Частота (%)" Binding="{Binding FrequencyFormatted}" Width="90"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+
+                                <Border Grid.Row="2" Background="{DynamicResource BadgeBgBrush}" CornerRadius="6" 
+                                        Padding="10,6" Margin="0,10,0,0">
+                                    <DockPanel>
+                                        <TextBlock x:Name="TbTotalWordsStat" Text="Всего слов: 0" 
+                                                   Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12"/>
+                                        <TextBlock x:Name="TbUniqueWordsStat" Text="Уникальных слов: 0" 
+                                                   HorizontalAlignment="Right" Foreground="{DynamicResource AccentBrush}" 
+                                                   FontWeight="SemiBold" FontSize="12"/>
+                                    </DockPanel>
+                                </Border>
+                            </Grid>
+                        </Border>
+
+                        <!-- Колонка 2: Эксперименты и бенчмарк (QuickSort vs RadixSort) -->
+                        <Border Grid.Column="1" Background="{DynamicResource CardBgBrush}" 
+                                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" 
+                                CornerRadius="8" Padding="14" Margin="4,0,0,0">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <DockPanel Grid.Row="0" Margin="0,0,0,10">
+                                    <StackPanel>
+                                        <TextBlock Text="Эксперименты: QuickSort vs MSD Radix Sort" 
+                                                   FontWeight="Bold" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                        <TextBlock Text="Замеры времени на текстах разной длины (100, 500, 1000, 2000, 5000 слов)" 
+                                                   FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                    </StackPanel>
+
+                                    <Button x:Name="BtnRunAllBenchmarks" Content="⚡ Запустить все эксперименты" 
+                                            Style="{StaticResource AccentButton}" 
+                                            Click="BtnRunAllBenchmarks_Click" HorizontalAlignment="Right" Padding="14,6"/>
+                                </DockPanel>
+
+                                <!-- Таблица результатов бенчмарка -->
+                                <DataGrid x:Name="DgBenchmarks" Grid.Row="1" AutoGenerateColumns="False" 
+                                          IsReadOnly="True" CanUserSortColumns="False">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Длина текста" Binding="{Binding WordCount, StringFormat='{}{0:N0} слов'}" Width="100"/>
+                                        <DataGridTextColumn Header="QuickSort" Binding="{Binding QuickSortFormatted}" Width="110"/>
+                                        <DataGridTextColumn Header="MSD RadixSort" Binding="{Binding RadixSortFormatted}" Width="110"/>
+                                        <DataGridTextColumn Header="Победитель" Binding="{Binding FasterAlgorithm}" Width="120"/>
+                                        <DataGridTextColumn Header="Соотношение" Binding="{Binding Ratio}" Width="*"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+
+                                <!-- Пояснительная сноска -->
+                                <Border Grid.Row="2" Background="{DynamicResource BadgeBgBrush}" CornerRadius="6" 
+                                        Padding="10,6" Margin="0,10,0,0">
+                                    <TextBlock Text="💡 Замеры производятся с помощью высокоточного Stopwatch после предварительного прогрева JIT. Время усреднено по серии прогонов." 
+                                               FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" TextWrapping="Wrap"/>
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
