@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SortingLabApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2bad8c9d3415de70f0698402a9b90fbaa7ad15c8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a759aeab75f2937ce30bef9388fcbf6e6e697dba")]
 [assembly: System.Reflection.AssemblyProductAttribute("SortingLabApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SortingLabApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

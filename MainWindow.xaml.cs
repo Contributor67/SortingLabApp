@@ -86,8 +86,8 @@ namespace SortingLabApp
             _sourceCountries = InitialCountries.GetDefaultCountries();
             PrepareExternalSortSteps();
 
-            // Инициализация Задания 3
-            TxtSourceText.Text = TextGenerator.GetSampleAlgorithmsText();
+            // Инициализация Задания 3: сразу генерируем текст
+            TxtSourceText.Text = TextGenerator.GenerateText(500);
         }
 
         #region Обработка горячих клавиш
@@ -944,8 +944,8 @@ namespace SortingLabApp
         private void BtnGenText100_Click(object sender, RoutedEventArgs e) => TxtSourceText.Text = TextGenerator.GenerateText(100);
         private void BtnGenText500_Click(object sender, RoutedEventArgs e) => TxtSourceText.Text = TextGenerator.GenerateText(500);
         private void BtnGenText1000_Click(object sender, RoutedEventArgs e) => TxtSourceText.Text = TextGenerator.GenerateText(1000);
-        private void BtnLoadAlice_Click(object sender, RoutedEventArgs e) => TxtSourceText.Text = TextGenerator.GetSampleAliceText();
-        private void BtnLoadAlgoText_Click(object sender, RoutedEventArgs e) => TxtSourceText.Text = TextGenerator.GetSampleAlgorithmsText();
+        private void BtnGenText2000_Click(object sender, RoutedEventArgs e) => TxtSourceText.Text = TextGenerator.GenerateText(2000);
+        private void BtnGenText5000_Click(object sender, RoutedEventArgs e) => TxtSourceText.Text = TextGenerator.GenerateText(5000);
 
         private void BtnCalculateFrequencies_Click(object sender, RoutedEventArgs e)
         {

@@ -701,21 +701,21 @@
 
                             <DockPanel Grid.Row="0" Margin="0,0,0,8">
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Исходный текст на английском языке" FontWeight="Bold" FontSize="13" 
+                                    <TextBlock Text="Сгенерированный текст на английском языке" FontWeight="Bold" FontSize="13" 
                                                Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,8,0"/>
                                     <TextBlock x:Name="TbWordCountHeader" Text="(слов: 0)" 
                                                Foreground="{DynamicResource TextSecondaryBrush}" FontSize="12"/>
                                 </StackPanel>
 
-                                <!-- Кнопки быстрых шаблонов -->
+                                <!-- Кнопки генерации текстов разной длины -->
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <TextBlock Text="Быстрый текст:" VerticalAlignment="Center" FontSize="11" 
+                                    <TextBlock Text="Генерация текста:" VerticalAlignment="Center" FontSize="11" 
                                                Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,8,0"/>
-                                    <Button Content="100 слов" Click="BtnGenText100_Click" Padding="8,3" Margin="0,0,6,0"/>
-                                    <Button Content="500 слов" Click="BtnGenText500_Click" Padding="8,3" Margin="0,0,6,0"/>
-                                    <Button Content="1 000 слов" Click="BtnGenText1000_Click" Padding="8,3" Margin="0,0,6,0"/>
-                                    <Button Content="📖 Алиса в Стране Чудес" Click="BtnLoadAlice_Click" Padding="8,3" Margin="0,0,6,0"/>
-                                    <Button Content="💻 Алгоритмы CS" Click="BtnLoadAlgoText_Click" Padding="8,3"/>
+                                    <Button Content="🎲 100 слов" Click="BtnGenText100_Click" Padding="8,3" Margin="0,0,6,0"/>
+                                    <Button Content="🎲 500 слов" Click="BtnGenText500_Click" Padding="8,3" Margin="0,0,6,0"/>
+                                    <Button Content="🎲 1 000 слов" Click="BtnGenText1000_Click" Padding="8,3" Margin="0,0,6,0"/>
+                                    <Button Content="🎲 2 000 слов" Click="BtnGenText2000_Click" Padding="8,3" Margin="0,0,6,0"/>
+                                    <Button Content="🎲 5 000 слов" Click="BtnGenText5000_Click" Padding="8,3"/>
                                 </StackPanel>
                             </DockPanel>
 
