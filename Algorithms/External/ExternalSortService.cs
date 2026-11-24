@@ -35,8 +35,12 @@ namespace SortingLabApp.Algorithms.External
             string file1Path = Path.Combine(workDirectory, "file_F1.csv");
             string file2Path = Path.Combine(workDirectory, "file_F2.csv");
 
-            // Применяем фильтр по континенту, если задан
-            var records = string.IsNullOrWhiteSpace(continentFilter) || continentFilter == "Все континенты"
+            // Применяем фильтр по континенту/категории, если задан
+            bool noFilter = string.IsNullOrWhiteSpace(continentFilter)
+                            || continentFilter == "Все континенты"
+                            || continentFilter == "Все записи";
+
+            var records = noFilter
                 ? new List<Country>(sourceList)
                 : sourceList.Where(c => c.Continent.Equals(continentFilter, StringComparison.OrdinalIgnoreCase)).ToList();
 
@@ -47,9 +51,9 @@ namespace SortingLabApp.Algorithms.External
             long fileOps = records.Count;
             int stepNum = 1;
 
-            string filterDesc = string.IsNullOrWhiteSpace(continentFilter) || continentFilter == "Все континенты" 
-                ? "всех континентов" 
-                : $"континента «{continentFilter}»";
+            string filterDesc = noFilter
+                ? "без фильтрации"
+                : $"категория «{continentFilter}»";
 
             var f0Initial = records.Select((c, i) => CountryRunRecord.Create(c, 0, i == 0)).ToList();
 
