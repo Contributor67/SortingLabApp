@@ -17,8 +17,6 @@ C:\Users\Антон\.gemini\antigravity\scratch\SortingLabApp\obj\Debug\net9.0-w
 C:\Users\Антон\.gemini\antigravity\scratch\SortingLabApp\obj\Debug\net9.0-windows\SortingLabApp.pdb
 C:\Users\Антон\.gemini\antigravity\scratch\SortingLabApp\obj\Debug\net9.0-windows\SortingLabApp.genruntimeconfig.cache
 C:\Users\Антон\.gemini\antigravity\scratch\SortingLabApp\obj\Debug\net9.0-windows\ref\SortingLabApp.dll
-C:\Users\Антон\.gemini\antigravity\scratch\SortingLabApp\obj\Debug\net9.0-windows\Themes\DarkTheme.baml
 C:\Users\Антон\.gemini\antigravity\scratch\SortingLabApp\obj\Debug\net9.0-windows\Themes\LightTheme.baml
 C:\Users\Антон\.gemini\antigravity\scratch\SortingLabApp\obj\Debug\net9.0-windows\App.baml
-C:\Users\Антон\.gemini\antigravity\scratch\SortingLabApp\obj\Debug\net9.0-windows\Views\SettingsWindow.baml
-C:\Users\Антон\.gemini\antigravity\scratch\SortingLabApp\obj\Debug\net9.0-windows\Views\SettingsWindow.g.cs
+C:\Users\Антон\.gemini\antigravity\scratch\SortingLabApp\obj\Debug\net9.0-windows\SortingLabApp.sourcelink.json

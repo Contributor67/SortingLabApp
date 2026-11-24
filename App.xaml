@@ -5,7 +5,8 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Themes/DarkTheme.xaml" />
+                <!-- Единственная активная тема: Светлая (Белая) -->
+                <ResourceDictionary Source="Themes/LightTheme.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <!-- Глобальный стиль кнопок -->
@@ -93,6 +94,14 @@
                 <Setter Property="FontSize" Value="13" />
             </Style>
 
+            <Style TargetType="ComboBoxItem">
+                <Setter Property="Background" Value="{DynamicResource CardBgBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+                <Setter Property="Padding" Value="8,6" />
+                <Setter Property="FontSize" Value="13" />
+                <Setter Property="Cursor" Value="Hand" />
+            </Style>
+
             <!-- Стиль TextBox -->
             <Style TargetType="TextBox">
                 <Setter Property="Background" Value="{DynamicResource CardBgBrush}" />
@@ -113,7 +122,7 @@
                 <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource BorderBrush}" />
                 <Setter Property="VerticalGridLinesBrush" Value="Transparent" />
                 <Setter Property="RowBackground" Value="Transparent" />
-                <Setter Property="AlternatingRowBackground" Value="{DynamicResource WindowBgBrush}" />
+                <Setter Property="AlternatingRowBackground" Value="{DynamicResource BadgeBgBrush}" />
                 <Setter Property="HeadersVisibility" Value="Column" />
                 <Setter Property="ColumnHeaderHeight" Value="32" />
                 <Setter Property="RowHeight" Value="28" />

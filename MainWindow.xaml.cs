@@ -16,7 +16,6 @@ using SortingLabApp.Algorithms.Internal;
 using SortingLabApp.Algorithms.Strings;
 using SortingLabApp.Data;
 using SortingLabApp.Models;
-using SortingLabApp.Views;
 
 namespace SortingLabApp
 {
@@ -144,18 +143,6 @@ namespace SortingLabApp
                         break;
                 }
             }
-        }
-
-        #endregion
-
-        #region Кнопка настроек
-
-        private void SettingsButton_Click(object sender, RoutedEventArgs e)
-        {
-            var settings = new SettingsWindow { Owner = this };
-            settings.ShowDialog();
-            RenderCurrentInternalStep(allowAnimation: false);
-            RenderCurrentExternalStep(allowAnimation: false);
         }
 
         #endregion
