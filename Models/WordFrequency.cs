@@ -20,6 +20,10 @@ namespace SortingLabApp.Models
         public string FasterAlgorithm { get; set; } = string.Empty;
         public string Ratio { get; set; } = string.Empty;
 
+        public string SourceText { get; set; } = string.Empty;
+        public string QuickSortedText { get; set; } = string.Empty;
+        public string RadixSortedText { get; set; } = string.Empty;
+
         public string QuickSortFormatted => $"{QuickSortTimeMs:F4} мс";
         public string RadixSortFormatted => $"{RadixSortTimeMs:F4} мс";
     }

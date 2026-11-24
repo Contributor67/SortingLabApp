@@ -9,45 +9,8 @@
         Focusable="True">
     
     <Grid>
-        <Grid.RowDefinitions>
-            <!-- Верхняя шапка -->
-            <RowDefinition Height="Auto"/>
-            <!-- Основные вкладки -->
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-
-        <!-- Шапка приложения -->
-        <Border Grid.Row="0" Background="{DynamicResource CardBgBrush}" 
-                BorderBrush="{DynamicResource BorderBrush}" 
-                BorderThickness="0,0,0,1" Padding="20,12">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-
-                <StackPanel Grid.Column="0">
-                    <TextBlock Text="Практическое задание 4: Алгоритмы сортировки" 
-                               FontSize="18" FontWeight="Bold" 
-                               Foreground="{DynamicResource TextPrimaryBrush}"/>
-                    <TextBlock Text="CombSort • ShellSort • QuickSort • TimSort • Внешнее слияние с цветными сериями • MSD RadixSort" 
-                               FontSize="12" Margin="0,3,0,0"
-                               Foreground="{DynamicResource TextSecondaryBrush}"/>
-                </StackPanel>
-
-                <!-- Подсказка по горячим клавишам (вместо настроек) -->
-                <Border Grid.Column="1" Background="{DynamicResource BadgeBgBrush}" 
-                        BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
-                        CornerRadius="6" Padding="12,6" VerticalAlignment="Center">
-                    <TextBlock Text="⌨ Пробел: Старт/Пауза  •  ← / →: Шаги  •  R: Сброс" 
-                               FontSize="12" FontWeight="SemiBold" 
-                               Foreground="{DynamicResource TextSecondaryBrush}"/>
-                </Border>
-            </Grid>
-        </Border>
-
         <!-- Вкладки по заданиям -->
-        <TabControl Grid.Row="1" Background="Transparent" BorderThickness="0" Margin="12,8,12,12">
+        <TabControl x:Name="MainTabControl" Background="Transparent" BorderThickness="0" Margin="12,10,12,12">
             <TabControl.Resources>
                 <Style TargetType="TabItem">
                     <Setter Property="FontSize" Value="14"/>
@@ -318,9 +281,9 @@
                                 </ComboBox>
                             </StackPanel>
 
-                            <!-- Фильтр по континенту -->
+                            <!-- Фильтр по континенту / категории -->
                             <StackPanel Margin="0,0,14,0" VerticalAlignment="Center">
-                                <TextBlock Text="Континент (фильтрация):" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,3"/>
+                                <TextBlock x:Name="TbExternalFilterLabel" Text="Континент (фильтрация):" FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}" Margin="0,0,0,3"/>
                                 <ComboBox x:Name="CbExternalContinent" Width="150" SelectionChanged="ExternalParameters_Changed">
                                     <ComboBoxItem Content="Все континенты" IsSelected="True"/>
                                     <ComboBoxItem Content="Европа"/>
@@ -401,6 +364,7 @@
                                 </StackPanel>
 
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <Button Content="📥 Загрузить таблицу (CSV)" Click="BtnLoadCustomTable_Click" Padding="10,4" Margin="0,0,8,0"/>
                                     <Button Content="📂 База стран" Click="BtnLoadDefaultCountries_Click" Padding="10,4" Margin="0,0,8,0"/>
                                     <Button Content="🎲 Случайные страны" Click="BtnGenerateRandomCountries_Click" Padding="10,4"/>
                                 </StackPanel>
@@ -519,7 +483,7 @@
                                                         <DockPanel>
                                                             <TextBlock Text="{Binding Country.Name}" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"/>
                                                             <TextBlock Text="{Binding Country.Continent}" Foreground="{DynamicResource TextSecondaryBrush}" Margin="8,0,0,0" FontSize="11"/>
-                                                            <TextBlock Text="{Binding Country.Population, StringFormat='Нас: {0:N0}'}" HorizontalAlignment="Right" 
+                                                            <TextBlock Text="{Binding Country.DisplayRightText}" HorizontalAlignment="Right" 
                                                                        Foreground="{DynamicResource AccentBrush}" FontWeight="SemiBold" FontSize="11"/>
                                                         </DockPanel>
                                                     </Border>
@@ -560,7 +524,7 @@
                                                         <DockPanel>
                                                             <TextBlock Text="{Binding Country.Name}" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"/>
                                                             <TextBlock Text="{Binding Country.Continent}" Foreground="{DynamicResource TextSecondaryBrush}" Margin="8,0,0,0" FontSize="11"/>
-                                                            <TextBlock Text="{Binding Country.Population, StringFormat='Нас: {0:N0}'}" HorizontalAlignment="Right" 
+                                                            <TextBlock Text="{Binding Country.DisplayRightText}" HorizontalAlignment="Right" 
                                                                        Foreground="{DynamicResource BarComparingBrush}" FontWeight="SemiBold" FontSize="11"/>
                                                         </DockPanel>
                                                     </Border>
@@ -601,7 +565,7 @@
                                                         <DockPanel>
                                                             <TextBlock Text="{Binding Country.Name}" FontWeight="SemiBold" Foreground="{DynamicResource TextPrimaryBrush}"/>
                                                             <TextBlock Text="{Binding Country.Continent}" Foreground="{DynamicResource TextSecondaryBrush}" Margin="8,0,0,0" FontSize="11"/>
-                                                            <TextBlock Text="{Binding Country.Population, StringFormat='Нас: {0:N0}'}" HorizontalAlignment="Right" 
+                                                            <TextBlock Text="{Binding Country.DisplayRightText}" HorizontalAlignment="Right" 
                                                                        Foreground="{DynamicResource BarSwappingBrush}" FontWeight="SemiBold" FontSize="11"/>
                                                         </DockPanel>
                                                     </Border>
@@ -806,8 +770,19 @@
                                         <DataGridTextColumn Header="Длина текста" Binding="{Binding WordCount, StringFormat='{}{0:N0} слов'}" Width="100"/>
                                         <DataGridTextColumn Header="QuickSort" Binding="{Binding QuickSortFormatted}" Width="110"/>
                                         <DataGridTextColumn Header="MSD RadixSort" Binding="{Binding RadixSortFormatted}" Width="110"/>
-                                        <DataGridTextColumn Header="Победитель" Binding="{Binding FasterAlgorithm}" Width="120"/>
+                                        <DataGridTextColumn Header="Победитель" Binding="{Binding FasterAlgorithm}" Width="115"/>
                                         <DataGridTextColumn Header="Соотношение" Binding="{Binding Ratio}" Width="*"/>
+                                        <DataGridTemplateColumn Header="Тексты" Width="64">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Button Content="📄" Click="BtnOpenBenchmarkTexts_Click"
+                                                            Tag="{Binding}"
+                                                            Padding="6,2" FontSize="13"
+                                                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                            ToolTip="Открыть начальный и конечный тексты"/>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
                                     </DataGrid.Columns>
                                 </DataGrid>
 

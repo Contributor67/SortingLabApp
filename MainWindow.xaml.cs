@@ -11,11 +11,13 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using Microsoft.Win32;
 using SortingLabApp.Algorithms.External;
 using SortingLabApp.Algorithms.Internal;
 using SortingLabApp.Algorithms.Strings;
 using SortingLabApp.Data;
 using SortingLabApp.Models;
+using SortingLabApp.Views;
 
 namespace SortingLabApp
 {
@@ -57,6 +59,7 @@ namespace SortingLabApp
         private bool _isExternalPlaying = false;
         private CancellationTokenSource? _externalCts;
         private int _externalDelay = 350;
+        private bool _isUpdatingExternalCombos = false;
         private readonly string _workDir = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ExternalSortData");
 
         #endregion
@@ -96,8 +99,7 @@ namespace SortingLabApp
         {
             if (e.OriginalSource is TextBox) return;
 
-            var tabControl = (TabControl)((Grid)Content).Children[1];
-            int currentTab = tabControl.SelectedIndex;
+            int currentTab = MainTabControl.SelectedIndex;
 
             if (currentTab == 0) // Вкладка 1: Внутренняя сортировка
             {
@@ -638,7 +640,7 @@ namespace SortingLabApp
 
         private void ExternalParameters_Changed(object sender, SelectionChangedEventArgs e)
         {
-            if (!IsLoaded) return;
+            if (!IsLoaded || _isUpdatingExternalCombos) return;
             StopExternalPlaying();
             PrepareExternalSortSteps();
         }
@@ -652,10 +654,116 @@ namespace SortingLabApp
             }
         }
 
+        private void BtnLoadCustomTable_Click(object sender, RoutedEventArgs e)
+        {
+            var dlg = new OpenFileDialog
+            {
+                Title = "Выберите файл таблицы (CSV / TXT)",
+                Filter = "Таблицы CSV и текстовые файлы (*.csv;*.txt)|*.csv;*.txt|Все файлы (*.*)|*.*"
+            };
+
+            if (dlg.ShowDialog() != true) return;
+
+            StopExternalPlaying();
+            var loadResult = InitialCountries.ValidateAndLoadCustomTable(dlg.FileName);
+
+            if (!loadResult.IsValid)
+            {
+                string errorDetails = string.Join("\n• ", loadResult.Errors);
+                MessageBox.Show(
+                    $"Таблица не прошла проверку корректности:\n\n• {errorDetails}",
+                    "Ошибка проверки таблицы",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+                return;
+            }
+
+            _sourceCountries = loadResult.Records;
+
+            _isUpdatingExternalCombos = true;
+            try
+            {
+                CbExternalSortKey.Items.Clear();
+                foreach (var col in loadResult.Columns)
+                {
+                    CbExternalSortKey.Items.Add(new ComboBoxItem { Content = col });
+                }
+
+                // По умолчанию выбираем первый числовой столбец, если он есть
+                int defaultKeyIndex = 0;
+                for (int i = 0; i < loadResult.Columns.Count; i++)
+                {
+                    if (loadResult.NumericColumns.Contains(loadResult.Columns[i]))
+                    {
+                        defaultKeyIndex = i;
+                        break;
+                    }
+                }
+                if (CbExternalSortKey.Items.Count > 0)
+                    CbExternalSortKey.SelectedIndex = defaultKeyIndex;
+
+                CbExternalContinent.Items.Clear();
+                string allLabel = loadResult.IsStandardCountrySchema ? "Все континенты" : "Все записи";
+                CbExternalContinent.Items.Add(new ComboBoxItem { Content = allLabel });
+                foreach (var val in loadResult.FilterValues)
+                {
+                    CbExternalContinent.Items.Add(new ComboBoxItem { Content = val });
+                }
+                CbExternalContinent.SelectedIndex = 0;
+
+                TbExternalFilterLabel.Text = !string.IsNullOrWhiteSpace(loadResult.FilterColumnName)
+                    ? $"{loadResult.FilterColumnName} (фильтрация):"
+                    : "Фильтрация:";
+            }
+            finally
+            {
+                _isUpdatingExternalCombos = false;
+            }
+
+            PrepareExternalSortSteps();
+
+            string numInfo = loadResult.NumericColumns.Count > 0
+                ? string.Join(", ", loadResult.NumericColumns)
+                : "нет (все текстовые)";
+
+            MessageBox.Show(
+                $"Таблица успешно загружена и проверена!\n\n" +
+                $"Записей: {loadResult.Records.Count}\n" +
+                $"Столбцы: {string.Join(", ", loadResult.Columns)}\n" +
+                $"Числовые поля: {numInfo}",
+                "Таблица загружена",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+        }
+
+        private void RestoreDefaultCountryCombos()
+        {
+            _isUpdatingExternalCombos = true;
+            try
+            {
+                CbExternalSortKey.Items.Clear();
+                foreach (var k in new[] { "Население", "Площадь", "Название", "Столица" })
+                    CbExternalSortKey.Items.Add(new ComboBoxItem { Content = k });
+                CbExternalSortKey.SelectedIndex = 0;
+
+                CbExternalContinent.Items.Clear();
+                foreach (var c in new[] { "Все континенты", "Европа", "Азия", "Африка", "Северная Америка", "Южная Америка", "Океания" })
+                    CbExternalContinent.Items.Add(new ComboBoxItem { Content = c });
+                CbExternalContinent.SelectedIndex = 0;
+
+                TbExternalFilterLabel.Text = "Континент (фильтрация):";
+            }
+            finally
+            {
+                _isUpdatingExternalCombos = false;
+            }
+        }
+
         private void BtnLoadDefaultCountries_Click(object sender, RoutedEventArgs e)
         {
             StopExternalPlaying();
             _sourceCountries = InitialCountries.GetDefaultCountries();
+            RestoreDefaultCountryCombos();
             PrepareExternalSortSteps();
         }
 
@@ -663,7 +771,15 @@ namespace SortingLabApp
         {
             StopExternalPlaying();
             _sourceCountries = InitialCountries.GenerateRandomCountries(30);
+            RestoreDefaultCountryCombos();
             PrepareExternalSortSteps();
+        }
+
+        private static string GetComboText(ComboBox cb, string fallback)
+        {
+            if (cb.SelectedItem is ComboBoxItem item && item.Content != null)
+                return item.Content.ToString() ?? fallback;
+            return cb.SelectedItem?.ToString() ?? fallback;
         }
 
         private void PrepareExternalSortSteps()
@@ -674,8 +790,8 @@ namespace SortingLabApp
                 ? ExternalSortMethod.NaturalMerge 
                 : ExternalSortMethod.DirectMerge;
 
-            string sortAttr = ((ComboBoxItem)CbExternalSortKey.SelectedItem).Content.ToString() ?? "Население";
-            string continentFilter = ((ComboBoxItem)CbExternalContinent.SelectedItem).Content.ToString() ?? "Все континенты";
+            string sortAttr = GetComboText(CbExternalSortKey, "Население");
+            string continentFilter = GetComboText(CbExternalContinent, "Все континенты");
             bool asc = CbExternalSortDir.SelectedIndex == 0;
 
             _externalSteps = ExternalSortService.ExecuteExternalSort(
@@ -722,13 +838,15 @@ namespace SortingLabApp
             if (LbFile2.Items.Count > 0) LbFile2.ScrollIntoView(LbFile2.Items[^1]);
 
             // 3. Арена поединка стран
-            string sortAttr = ((ComboBoxItem)CbExternalSortKey.SelectedItem).Content.ToString() ?? "Население";
+            string sortAttr = GetComboText(CbExternalSortKey, "Население");
 
             if (step.ActiveCountry1 != null)
             {
                 TbArenaCountry1.Text = step.ActiveCountry1.Name;
                 TbArenaContinent1.Text = step.ActiveCountry1.Continent;
-                TbArenaCapital1.Text = $"Столица: {step.ActiveCountry1.Capital}";
+                TbArenaCapital1.Text = string.IsNullOrWhiteSpace(step.ActiveCountry1.Capital)
+                    ? string.Empty
+                    : $"Столица: {step.ActiveCountry1.Capital}";
                 TbArenaVal1.Text = $"{sortAttr}: {step.ActiveCountry1.GetAttributeValue(sortAttr):N0}";
                 CardArenaF1.Opacity = 1.0;
             }
@@ -745,7 +863,9 @@ namespace SortingLabApp
             {
                 TbArenaCountry2.Text = step.ActiveCountry2.Name;
                 TbArenaContinent2.Text = step.ActiveCountry2.Continent;
-                TbArenaCapital2.Text = $"Столица: {step.ActiveCountry2.Capital}";
+                TbArenaCapital2.Text = string.IsNullOrWhiteSpace(step.ActiveCountry2.Capital)
+                    ? string.Empty
+                    : $"Столица: {step.ActiveCountry2.Capital}";
                 TbArenaVal2.Text = $"{sortAttr}: {step.ActiveCountry2.GetAttributeValue(sortAttr):N0}";
                 CardArenaF2.Opacity = 1.0;
             }
@@ -995,6 +1115,8 @@ namespace SortingLabApp
                     double totalRadixMs = 0;
 
                     var sw = new Stopwatch();
+                    string[] lastQuick = Array.Empty<string>();
+                    string[] lastRadix = Array.Empty<string>();
 
                     for (int it = 0; it < iterations; it++)
                     {
@@ -1010,6 +1132,9 @@ namespace SortingLabApp
                         MsdRadixSort.Sort(arrRadix);
                         sw.Stop();
                         totalRadixMs += sw.Elapsed.TotalMilliseconds;
+
+                        lastQuick = arrQuick;
+                        lastRadix = arrRadix;
                     }
 
                     double avgQuick = totalQuickMs / iterations;
@@ -1037,7 +1162,10 @@ namespace SortingLabApp
                         QuickSortTimeMs = avgQuick,
                         RadixSortTimeMs = avgRadix,
                         FasterAlgorithm = winner,
-                        Ratio = ratio
+                        Ratio = ratio,
+                        SourceText = text,
+                        QuickSortedText = string.Join(" ", lastQuick),
+                        RadixSortedText = string.Join(" ", lastRadix)
                     };
 
                     Dispatcher.Invoke(() => _benchmarkResults.Add(result));
@@ -1046,6 +1174,15 @@ namespace SortingLabApp
 
             BtnRunAllBenchmarks.IsEnabled = true;
             BtnRunAllBenchmarks.Content = "⚡ Запустить все эксперименты";
+        }
+
+        private void BtnOpenBenchmarkTexts_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is BenchmarkResult result)
+            {
+                var win = new BenchmarkTextsWindow(result) { Owner = this };
+                win.ShowDialog();
+            }
         }
 
         #endregion
