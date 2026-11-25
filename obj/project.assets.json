@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\user\\source\\repos\\PrettyTime-max\\SortingLabApp\\SortingLabApp.csproj",
+      "projectUniqueName": "C:\\Users\\user\\source\\repos\\Contributor67\\SortingLabApp\\SortingLabApp.csproj",
       "projectName": "SortingLabApp",
-      "projectPath": "C:\\Users\\user\\source\\repos\\PrettyTime-max\\SortingLabApp\\SortingLabApp.csproj",
+      "projectPath": "C:\\Users\\user\\source\\repos\\Contributor67\\SortingLabApp\\SortingLabApp.csproj",
       "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\user\\source\\repos\\PrettyTime-max\\SortingLabApp\\obj\\",
+      "outputPath": "C:\\Users\\user\\source\\repos\\Contributor67\\SortingLabApp\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",

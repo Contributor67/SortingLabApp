@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SortingLabApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a44693e89c5fe4f1ffe6c9fa962511ecb536db7e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+15f48191f79df4957d0a1a5d9c46c20489420af2")]
 [assembly: System.Reflection.AssemblyProductAttribute("SortingLabApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SortingLabApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

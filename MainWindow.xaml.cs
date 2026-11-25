@@ -1097,7 +1097,7 @@ namespace SortingLabApp
             BtnRunAllBenchmarks.Content = "⏳ Измерение...";
             _benchmarkResults.Clear();
 
-            int[] testSizes = { 100, 500, 1000, 2000, 5000, 10000 };
+            int[] testSizes = { 100, 500, 1000, 2000, 5000, 10000, 50000, 100000, 200000, 500000, 1000000 };
 
             await Task.Run(() =>
             {

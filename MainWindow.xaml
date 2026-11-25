@@ -754,7 +754,7 @@
                                     <StackPanel>
                                         <TextBlock Text="Эксперименты: QuickSort vs MSD Radix Sort" 
                                                    FontWeight="Bold" FontSize="13" Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                        <TextBlock Text="Замеры времени на текстах разной длины (100, 500, 1000, 2000, 5000 слов)" 
+                                        <TextBlock Text="Замеры времени на текстах разной длины (100 – 1 000 000 слов)" 
                                                    FontSize="11" Foreground="{DynamicResource TextSecondaryBrush}"/>
                                     </StackPanel>
 
